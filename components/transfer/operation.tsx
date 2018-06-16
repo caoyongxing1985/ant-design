@@ -5,10 +5,11 @@ export interface TransferOperationProps {
   className?: string;
   leftArrowText?: string;
   rightArrowText?: string;
-  moveToLeft?: React.FormEventHandler<HTMLButtonElement>;
-  moveToRight?: React.FormEventHandler<HTMLButtonElement>;
+  moveToLeft?: React.MouseEventHandler<HTMLButtonElement>;
+  moveToRight?: React.MouseEventHandler<HTMLButtonElement>;
   leftActive?: boolean;
   rightActive?: boolean;
+  style?: React.CSSProperties;
 }
 
 export default class Operation extends React.Component<TransferOperationProps, any> {
@@ -21,9 +22,10 @@ export default class Operation extends React.Component<TransferOperationProps, a
       leftActive,
       rightActive,
       className,
+      style,
     } = this.props;
     return (
-      <div className={className}>
+      <div className={className} style={style}>
         <Button
           type="primary"
           size="small"

@@ -1,6 +1,8 @@
 const path = require('path');
 const CSSSplitWebpackPlugin = require('css-split-webpack-plugin').default;
+const OfflinePlugin = require('offline-plugin');
 const replaceLib = require('antd-tools/lib/replaceLib');
+const getExternalResources = require('./getExternalResources');
 
 const isDev = process.env.NODE_ENV === 'development';
 const usePreact = process.env.REACT_ENV === 'preact';
@@ -108,7 +110,29 @@ module.exports = {
 
     alertBabelConfig(config.module.rules);
 
-    config.plugins.push(new CSSSplitWebpackPlugin({ size: 4000 }));
+    config.plugins.push(
+      new CSSSplitWebpackPlugin({ size: 4000 }),
+      new OfflinePlugin({
+        appShell: '/app-shell',
+        caches: {
+          main: [':rest:'],
+          additional: [':externals:'],
+        },
+        externals: [
+          '/app-shell',
+          'https://at.alicdn.com/t/font_148784_v4ggb6wrjmkotj4i.woff',
+          'https://at.alicdn.com/t/font_148784_v4ggb6wrjmkotj4i.eot',
+          'https://at.alicdn.com/t/font_148784_v4ggb6wrjmkotj4i.svg',
+          'https://at.alicdn.com/t/font_148784_v4ggb6wrjmkotj4i.ttf',
+        ].concat(getExternalResources()),
+        responseStrategy: 'network-first',
+        safeToUseOptionalCaches: true,
+        ServiceWorker: {
+          events: true,
+        },
+        AppCache: false,
+      }),
+    );
 
     return config;
   },
